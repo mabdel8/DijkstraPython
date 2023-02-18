@@ -18,6 +18,8 @@ box_height = window_height // rows
 
 grid = []
 queue = []
+path = []
+
 
 class Box:
   def __init__(self, i , j):
@@ -29,6 +31,7 @@ class Box:
     self.queued = False
     self.visited = False
     self.neighbours = []
+    self.prior = None
 
   #draw method for each box, outlines each box with color
   def draw(self, win, color):
@@ -99,10 +102,14 @@ def main() :
         current_box.visited = True
         if current_box == target_box:
           searching = False
+          while current_box.prior != start_box:
+            path.append(current_box.prior)
+            current_box = current_box.prior
         else:
           for neighbour in current_box.neighbours:
             if not neighbour.queued and not neighbour.wall:
               neighbour.queued = True
+              neighbour.prior = current_box
               queue.append(neighbour)
       else:
         if searching:
@@ -121,6 +128,8 @@ def main() :
           box.draw(window, (200, 0, 0))
         if box.visited:
           box.draw(window, (0, 200, 0))
+        if box in path:
+          box.draw(window, (0, 0, 200))
 
         if box.start:
           box.draw(window, (0, 200, 200))
